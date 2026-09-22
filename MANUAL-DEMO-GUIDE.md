@@ -1,25 +1,24 @@
-# Complete manual demonstration guide
+# 完整手动演示指南
 
-This guide takes a presenter from a fresh template repository to the final deployed site. Follow
-it once as a rehearsal before recording. Keep
-[`PRESENTER-RUNSHEET.md`](./PRESENTER-RUNSHEET.md) open during the recording for the shorter script
-and talking points.
+本指南带领演示者从一个全新的模板仓库走到最终部署的站点。在录制之前，先完整排练一遍。
+录制期间保持 [`PRESENTER-RUNSHEET.md`](./PRESENTER-RUNSHEET.md) 打开，使用其中更精炼的
+脚本与讲解要点。
 
-GitHub labels can move as the product changes. If a label differs slightly, use the linked GitHub
-documentation and preserve the outcome described under **Expected result**.
+GitHub 的界面标签会随产品演进变化。如果某个标签略有不同，请参考链接的 GitHub 文档，
+并保证达成 **预期结果** 中描述的状态。
 
-## 1. Confirm prerequisites
+## 1. 确认前置条件
 
-You need:
+你需要：
 
-- A GitHub account that can create public repositories.
-- A Copilot plan that includes Copilot coding agent and Copilot Code Review.
-- Access to the [GitHub Copilot app](https://github.com/copilot).
-- Git, [Node.js 24](https://nodejs.org/) to match CI, npm, and
-  [GitHub CLI](https://cli.github.com/) installed.
-- Repository administrator permission for the disposable demonstration repository.
+- 一个能创建公开仓库的 GitHub 账户。
+- 包含 Copilot coding agent 与 Copilot Code Review 的 Copilot 计划。
+- 能访问 [GitHub Copilot 应用](https://github.com/copilot)。
+- 已安装 Git、与 CI 一致的 [Node.js 24](https://nodejs.org/)、npm，以及
+  [GitHub CLI](https://cli.github.com/)。
+- 对该一次性演示仓库拥有管理员权限。
 
-Sign in and verify the tools:
+登录并验证工具：
 
 ```bash
 node --version
@@ -27,38 +26,35 @@ npm --version
 gh auth status
 ```
 
-Node `22.12.0` is the enforced minimum; Node 24 is recommended. If GitHub CLI reports missing
-repository or workflow access,
-refresh its authorization:
+Node `22.12.0` 是强制的最低版本；推荐使用 Node 24。如果 GitHub CLI 报告缺少仓库或
+工作流访问权限，请刷新其授权：
 
 ```bash
 gh auth refresh -h github.com -s repo,workflow,read:org
 ```
 
-Do not use the canonical `anothergeorgecoldham/ship-with-ai` repository for a rehearsal or
-recording.
+不要用规范仓库 `anothergeorgecoldham/ship-with-ai` 进行排练或录制。
 
-## 2. Create a repository from the template
+## 2. 从模板创建仓库
 
-1. Open <https://github.com/anothergeorgecoldham/ship-with-ai>.
-2. Above the file list, select **Use this template**.
-3. Select **Create a new repository**.
-4. Select your account or presenting organization as **Owner**.
-5. Enter a unique name, for example `ship-with-ai-fr-demo`.
-6. Select **Public**.
-7. Leave **Include all branches** cleared.
-8. Select **Create repository**.
-9. Wait for the new repository page to load.
+1. 打开 <https://github.com/anothergeorgecoldham/ship-with-ai>。
+2. 在文件列表上方选择 **Use this template**。
+3. 选择 **Create a new repository**。
+4. 将你的账户或演示用组织选为 **Owner**。
+5. 输入一个唯一名称，例如 `ship-with-ai-fr-demo`。
+6. 选择 **Public**。
+7. 保持 **Include all branches** 不勾选。
+8. 选择 **Create repository**。
+9. 等待新仓库页面加载完成。
 
-**Expected result:** the new repository contains one initial commit on `main`. It is independent
-of the source repository and is not a fork.
+**预期结果：** 新仓库的 `main` 分支上有一个初始提交。它与源仓库彼此独立，也不是 fork。
 
-GitHub reference:
-[Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+GitHub 参考文档：
+[Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)。
 
-## 3. Clone and install the start state
+## 3. 克隆并安装初始状态
 
-Replace both placeholders below:
+替换下面命令中的两个占位符：
 
 ```bash
 gh repo clone <owner>/<repository>
@@ -66,185 +62,174 @@ cd <repository>
 npm ci
 ```
 
-Do not run `npm audit fix`, update dependencies, or copy `.github/demo/deploy.yml` yet. The start
-state is intentionally vulnerable.
+现在不要运行 `npm audit fix`、不要更新依赖，也还不要复制 `.github/demo/deploy.yml`。
+初始状态是有意留有漏洞的。
 
-**Expected result:** installation completes and reports the deliberate `marked` finding.
+**预期结果：** 安装完成，并报告那个刻意设置的 `marked` 告警。
 
-## 4. Configure the disposable repository
+## 4. 配置一次性仓库
 
-First preview what bootstrap will change:
+先预览 bootstrap 将要做的变更：
 
 ```bash
 npm run demo:bootstrap -- --repo <owner>/<repository>
 ```
 
-Read the target repository printed on the first line. If it is correct, apply the configuration:
+阅读第一行打印的目标仓库。确认无误后应用配置：
 
 ```bash
 npm run demo:bootstrap -- --repo <owner>/<repository> --apply
 ```
 
-Bootstrap enables:
+Bootstrap 会启用：
 
-- auto-merge;
-- a default-branch ruleset requiring `build` and `audit` from GitHub Actions, with zero required
-  approvals, no bypass actors, and deletion and force-push protection;
-- Dependabot alerts and security updates;
-- secret scanning and push protection;
-- Generic patterns when that optional setting is available;
-- CodeQL default setup;
-- automatic Copilot Code Review;
-- GitHub Pages using GitHub Actions;
-- the one-time **Initialize demo site** workflow.
+- 自动合并（auto-merge）；
+- 一个默认分支规则集：要求 GitHub Actions 的 `build` 与 `audit` 检查、所需审批数为零、
+  无绕过者，并启用删除与强制推送保护；
+- Dependabot 告警与安全更新；
+- 密钥扫描与推送保护；
+- Generic patterns（在该可选设置可用时）；
+- CodeQL 默认配置（default setup）；
+- 自动 Copilot 代码审查；
+- 使用 GitHub Actions 的 GitHub Pages；
+- 一次性的 **Initialize demo site** 工作流。
 
-**Expected result:** bootstrap ends successfully and prints the initialization workflow URL.
+**预期结果：** bootstrap 成功结束并打印初始化工作流的 URL。
 
-## 5. Confirm GitHub settings manually
+## 5. 手动确认 GitHub 设置
 
-Use these checks even though bootstrap configures them. They catch licensing and policy
-restrictions that an API response cannot prove.
+即使 bootstrap 已经配置，也要做这些检查。它们能发现 API 响应无法证明的许可以及
+策略限制。
 
-### Copilot features
+### Copilot 功能
 
-1. Open your GitHub profile **Settings**.
-2. Open **Copilot**, then **Features**.
-3. Confirm **Copilot code review** is enabled.
-4. Confirm **Copilot cloud agent** or **Coding agent** is enabled.
-5. If an organization supplies the license, a shield icon may indicate an enforced setting.
+1. 打开你的 GitHub 个人 **Settings**。
+2. 打开 **Copilot**，再打开 **Features**。
+3. 确认 **Copilot code review** 已启用。
+4. 确认 **Copilot cloud agent** 或 **Coding agent** 已启用。
+5. 如果许可证由组织提供，盾牌图标可能表示该设置被组织强制。
 
-### Repository behavior
+### 仓库行为
 
-1. Open the disposable repository.
-2. Select **Settings**.
-3. Under **General → Pull Requests**, confirm **Allow auto-merge** is enabled.
-4. Under **Rules → Rulesets**, open **Automatic Copilot code review** and confirm it is active for
-   the default branch.
-5. Under **Pages**, confirm **Source** is **GitHub Actions**.
-6. Under **Security** or **Security and quality**, confirm Dependabot, code scanning, secret
-   scanning, and push protection are enabled.
-7. Under **Advanced Security → Secret Protection**, look for **Generic patterns**. Enable it if it
-   is available. If it is not shown, continue without the optional secret-scanning beat.
+1. 打开一次性仓库。
+2. 选择 **Settings**。
+3. 在 **General → Pull Requests** 下确认 **Allow auto-merge** 已启用。
+4. 在 **Rules → Rulesets** 下打开 **Automatic Copilot code review**，确认其对默认分支
+   处于激活状态。
+5. 在 **Pages** 下确认 **Source** 为 **GitHub Actions**。
+6. 在 **Security** 或 **Security and quality** 下确认 Dependabot、代码扫描、密钥扫描和
+   推送保护均已启用。
+7. 在 **Advanced Security → Secret Protection** 下查找 **Generic patterns**。可用就启用。
+   如果未显示，则跳过可选的密钥扫描环节继续。
 
-### Branch rules and auto-merge
+### 分支规则与自动合并
 
-Configure each repository created from the template explicitly; template rulesets and settings
-are not assumed to carry over. Bootstrap creates or updates the following ruleset. Under
-**Settings → Rules → Rulesets**, confirm it matches:
+对每个从模板创建的仓库都要显式配置；不要假设模板的规则集和设置会随之继承。
+bootstrap 会创建或更新如下规则集。在 **Settings → Rules → Rulesets** 下确认与之匹配：
 
-| Setting | Value |
+| 设置 | 值 |
 |---|---|
 | Name | `Require build and audit before merge` |
 | Enforcement status | **Active** |
 | Target branches | **Default branch** |
-| Bypass list | Empty |
-| Restrict deletions | Enabled |
-| Block force pushes | Enabled |
-| Require a pull request before merging | Enabled |
+| Bypass list | 空 |
+| Restrict deletions | 启用 |
+| Block force pushes | 启用 |
+| Require a pull request before merging | 启用 |
 | Required approvals | `0` |
-| Require code owner review / approval of the most recent push | Disabled |
-| Require conversation resolution | Disabled |
-| Require status checks to pass | Enabled |
-| Required checks | `build` and `audit`, sourced from **GitHub Actions** |
-| Require branches to be up to date before merging | Disabled |
+| Require code owner review / approval of the most recent push | 禁用 |
+| Require conversation resolution | 禁用 |
+| Require status checks to pass | 启用 |
+| Required checks | 来自 **GitHub Actions** 的 `build` 与 `audit` |
+| Require branches to be up to date before merging | 禁用 |
 
-If it is missing or incorrect, rerun bootstrap with `--apply` (add `--skip-deploy` to avoid
-reinitializing the site), or create/update it manually. If the manual check picker does not list
-`build` and `audit`, open a setup PR, let the workflows run, then select those exact check names.
-Bootstrap configures them through the API without waiting for the picker.
+如果规则集缺失或不正确，用 `--apply` 重跑 bootstrap（加 `--skip-deploy` 避免重新初始化
+站点），或手动创建/更新。如果手动选择检查的列表中没有 `build` 和 `audit`，先开一个
+准备性 PR，让工作流运行一遍，再选择这些确切的检查名称。Bootstrap 通过 API 配置它们，
+无需等待选择器。
 
-Use the updated template workflows as well as the ruleset. **Dependency policy** must run on
-every PR to `main`, without `paths` or `paths-ignore` filters. Otherwise a feature-only PR will
-wait indefinitely for `audit`. Bootstrap changes repository settings, not files in an older copy
-of the template; bring the updated workflow and audit scripts into that repository before
-enabling the ruleset.
+使用更新后的模板工作流以及上面的规则集。**Dependency policy** 必须在每个指向 `main` 的
+PR 上运行，不带 `paths` 或 `paths-ignore` 过滤。否则纯功能 PR 会无限等待 `audit`。
+bootstrap 修改的是仓库设置，而不是旧模板副本中的文件；在启用规则集之前，先把更新后的
+工作流与审计脚本带入该仓库。
 
-The required `audit` check preserves the teaching sequence: ordinary PRs with the seeded
-`marked` version must match the intentional start-state findings. Dependabot PRs, and ordinary
-PRs after remediation, require the clean state. The production gate always requires the clean
-state. A green demo PR therefore does not mean the seeded dependency is safe for production.
+必需的 `audit` 检查保护了教学顺序：使用预置 `marked` 版本的普通 PR 必须匹配有意设置的
+初始状态告警。Dependabot PR 以及修复之后的普通 PR 要求干净状态。生产门禁则始终要求
+干净状态。因此一个绿色的演示 PR 并不意味着预置依赖对生产是安全的。
 
-For GitHub's native auto-merge, mark the PR ready for review and, while required checks are pending
-or failing, select **Enable auto-merge** and confirm the merge method. If all requirements already
-pass, immediate merge is expected. Do not depend on catching a waiting window during recording.
-Auto-merge is enabled per PR, manually or through separate automation; the repository setting
-does not opt in every PR. Agent Merge in the Copilot app is a separate workflow used below.
-Automatic Copilot review remains independent and does not require a human approval.
+关于 GitHub 原生自动合并：将 PR 标记为 ready for review，并在必需检查待运行或失败时
+选择 **Enable auto-merge**、确认合并方式。如果所有条件已经满足，直接合并是预期行为。
+不要指望在录制时恰好抓到一个等待窗口。自动合并是按 PR 逐个启用的，手动或通过单独的
+自动化；仓库设置不会让所有 PR 自动加入。Copilot 应用中的 Agent Merge 是另一套工作流，
+见下文。自动 Copilot 审查保持独立，不要求人工审批。
 
-### Coding agent and Agent Merge
+### Coding agent 与 Agent Merge
 
-1. Open the [GitHub Copilot app](https://github.com/copilot).
-2. Open **My work** and confirm the disposable repository and its issues are accessible.
-3. During a separate rehearsal, start an implementation session from the feature issue and let
-   it produce the feature changes, as described in Step 8.
-4. In that implementation session, open the arrow beside **Create PR**. Confirm **Agent merge**
-   is listed. Inspect only; do not select the main action button to start a merge.
-5. Keep the recording repository in its untouched start state; do not reuse a repository whose
-   feature or dependency PR has already been merged.
+1. 打开 [GitHub Copilot 应用](https://github.com/copilot)。
+2. 打开 **My work**，确认可访问一次性仓库及其 issues。
+3. 在一次单独的排练中，从功能 issue 启动一个实现会话，让它产出功能变更，如第 8 步所述。
+4. 在该实现会话中，打开 **Create PR** 旁的箭头，确认列表中有 **Agent merge**。只查看，
+   不要点击主操作按钮启动合并。
+5. 保持录制仓库处于未改动的初始状态；不要复用功能 PR 或依赖 PR 已被合并过的仓库。
 
-An empty session may not expose **Create PR** yet. A session opened from someone else's PR,
-including Dependabot's, may show **Submit review** instead. Neither screen confirms Agent Merge
-availability. Use the feature's original implementation session with changes, not a PR-review
-session, for this check.
+空会话可能还没有 **Create PR**。从他人 PR（包括 Dependabot 的）打开的会话可能显示的是
+**Submit review**。这两种界面都不能证明 Agent Merge 可用。请使用该功能原始的、带有变更的
+实现会话来做这项检查，而不是 PR 审查会话。
 
-If Agent Merge is still missing there, stop and check the app version, Copilot plan, repository
-access, and organization policy. Repository rules alone cannot prove that the app control is
-available.
+如果那里仍然没有 Agent Merge，请停下来检查应用版本、Copilot 计划、仓库访问权限和组织
+策略。仅凭仓库规则无法证明该应用控件可用。
 
-## 6. Wait for security preparation
+## 6. 等待安全准备完成
 
-GitHub needs time to scan a new template repository.
+GitHub 需要时间扫描新的模板仓库。
 
-1. In the repository, open **Pull requests**.
-2. Wait for exactly one Dependabot pull request updating `marked`.
-3. Open **Security** or **Security and quality**.
-4. Under **Dependabot**, confirm the high-severity alerts refer only to `marked`.
-5. If Generic patterns is available, confirm an open HTTP bearer-header alert points to
-   `src/lib/demo-secret-fixture.js`. Otherwise, omit this optional check.
-6. Under **Actions**, confirm **Initialize demo site** succeeded.
-7. Open the Pages URL from that run and confirm the initial site loads.
+1. 在仓库中打开 **Pull requests**。
+2. 等待恰好一个更新 `marked` 的 Dependabot 拉取请求出现。
+3. 打开 **Security** 或 **Security and quality**。
+4. 在 **Dependabot** 下确认高危告警只涉及 `marked`。
+5. 如果 Generic patterns 可用，确认存在一个指向 `src/lib/demo-secret-fixture.js` 的、
+   处于打开状态的 HTTP bearer 头告警。否则跳过这个可选检查。
+6. 在 **Actions** 下确认 **Initialize demo site** 已成功。
+7. 打开该次运行的 Pages URL，确认初始站点可以加载。
 
-Do not merge or dismiss the prepared Dependabot finding. If the optional secret alert exists, do
-not dismiss it before recording.
+不要合并或关闭已备好的 Dependabot 告警。如果可选的密钥告警存在，录制前也不要关闭它。
 
-## 7. Run recording preflight
+## 7. 运行录制 preflight
 
-Return to the local clone:
+回到本地克隆：
 
 ```bash
 npm run demo:preflight -- --repo <owner>/<repository> --confirm-copilot
 ```
 
-Resolve every failure. Do not record until the final line is:
+解决每一项失败。在最后一行输出以下内容之前不要录制：
 
 ```text
 READY TO RECORD
 ```
 
-`[INFO]` messages about unavailable Generic patterns or a missing demo secret alert do not block
-the recording.
+关于 Generic patterns 不可用或演示密钥告警缺失的 `[INFO]` 消息不阻断录制。
 
-Close unrelated tabs and notifications. Keep open:
+关闭无关的标签页和通知。保持以下页面打开：
 
-- the repository **Issues**, **Pull requests**, **Actions**, and security pages;
-- the initial Pages site;
-- the GitHub Copilot app **My work** view;
-- `PRESENTER-RUNSHEET.md`.
+- 仓库的 **Issues**、**Pull requests**、**Actions** 与安全页面；
+- 初始的 Pages 站点；
+- GitHub Copilot 应用的 **My work** 视图；
+- `PRESENTER-RUNSHEET.md`。
 
-## 8. Record Beat 0 — issue to pull request
+## 8. 录制 Beat 0 —— 从 issue 到拉取请求
 
-Creating the issue does not itself create a PR. In this walkthrough, the issue supplies the
-requirements, the Copilot app session implements them, and **Create PR** publishes the changes.
-Keep that same implementation session open through review and Agent Merge.
+创建 issue 本身并不会创建 PR。在本流程中，issue 提供需求，Copilot 应用会话实现需求，
+**Create PR** 发表变更。审查与 Agent Merge 期间保持同一个实现会话打开。
 
-1. In the disposable repository, select **Issues → New issue**.
-2. Select **Get started** for the **Feature request** template.
-3. Translate the issue title and lesson prose if needed.
-4. Do not translate filenames, commands, dependency names, or acceptance criteria.
-5. Select **Create** or **Submit new issue**.
-6. In the Copilot app, open **My work**, find that issue, and select **New session**. Use a local
-   worktree implementation session so the default branch remains unchanged.
-7. Ask the session to implement the issue:
+1. 在一次性仓库中，选择 **Issues → New issue**。
+2. 对 **Feature request** 模板选择 **Get started**。
+3. 如有需要，翻译 issue 标题与课程正文。
+4. 不要翻译文件名、命令、依赖名称或验收标准。
+5. 选择 **Create** 或 **Submit new issue**。
+6. 在 Copilot 应用中打开 **My work**，找到该 issue 并选择 **New session**。使用本地
+   worktree 实现会话，使默认分支保持不变。
+7. 要求会话实现该 issue：
 
    ```text
    Implement this issue's lesson and feedback-widget changes. Copy .github/demo/deploy.yml
@@ -255,189 +240,179 @@ Keep that same implementation session open through review and Agent Merge.
    package versions or registry settings to work around it.
    ```
 
-8. Inspect the implementation diff. Do not create a second implementation session for the issue.
-9. Open the arrow beside **Create PR** and point out **Agent merge**. Leave **Create PR** selected
-   for now: the audience must see the review before the feature is allowed to merge.
-10. Click the main **Create PR** button and follow its confirmation prompts to publish a
-    non-draft PR. Ensure its description includes `Closes #<issue-number>`.
-11. Keep the original implementation session open. Use the browser or its PR panel to show the
-    new PR, but return to this session for Beat 2.
+8. 检查实现 diff。不要为该 issue 再开第二个实现会话。
+9. 打开 **Create PR** 旁的箭头，指出 **Agent merge**。暂时保持选中 **Create PR**：
+   观众必须先看到审查，才能看到功能被允许合并。
+10. 点击主按钮 **Create PR**，按其确认提示发布一个非草稿 PR。确保其描述包含
+    `Closes #<issue-number>`。
+11. 保持原始实现会话打开。可用浏览器或其 PR 面板展示新 PR，但到 Beat 2 时回到
+    这个会话。
 
-**Expected result:** the pull request updates lesson/widget code and adds
-`.github/workflows/deploy.yml` by copying `.github/demo/deploy.yml`.
+**预期结果：** 拉取请求更新课程/组件代码，并通过复制 `.github/demo/deploy.yml` 新增
+`.github/workflows/deploy.yml`。
 
-Before continuing, inspect **Files changed**. If `package.json` or `package-lock.json` changed, tell
-Copilot:
+继续之前，检查 **Files changed**。如果 `package.json` 或 `package-lock.json` 有变化，
+告诉 Copilot：
 
 ```text
 Revert all changes to package.json and package-lock.json. Do not change dependencies.
 ```
 
-Wait for the correction and green `build` and `audit` checks on GitHub. A local registry failure
-does not count as a successful local build; use the actual GitHub check results as evidence.
+等待修正提交，并以 GitHub 上绿色的 `build` 与 `audit` 检查为准。本地注册表失败不算
+本地构建成功；以 GitHub 的实际检查结果为证据。
 
-**Alternative, not the primary Agent Merge walkthrough:** assigning an issue to the cloud coding
-agent on GitHub can also produce a PR. Do not both assign it and start a separate implementation
-for the same issue. Opening the cloud-created PR in a new review session does not guarantee the
-same Agent Merge controls; rehearse that handoff separately before choosing it.
+**替代路径，非 Agent Merge 主流程：** 在 GitHub 上把 issue 指派给云端 coding agent 也能
+产出 PR。不要对同一个 issue 既指派又另起实现会话。把云端创建的 PR 在新审查会话中打开，
+不保证出现相同的 Agent Merge 控件；如要选用该交接方式，请单独排练。
 
-GitHub reference:
-[Managing issues and pull requests with the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/managing-issues-and-pull-requests).
+GitHub 参考文档：
+[Managing issues and pull requests with the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/managing-issues-and-pull-requests)。
 
-## 9. Record Beat 1 — Copilot Code Review
+## 9. 录制 Beat 1 —— Copilot Code Review
 
-1. Open the Copilot-authored pull request on GitHub.
-2. Show the green build check and informational dependency audit.
-3. Wait for the automatic Copilot review.
-4. If no review appears, open **Reviewers** in the right sidebar and request **Copilot** manually.
-5. Open **Files changed** and show the inline findings.
+1. 在 GitHub 上打开 Copilot 创建的拉取请求。
+2. 展示绿色的构建检查与仅作参考的依赖审计。
+3. 等待自动 Copilot 审查。
+4. 如果没有出现审查，在右侧栏打开 **Reviewers**，手动请求 **Copilot**。
+5. 打开 **Files changed**，展示行内发现。
 
-The expected findings are:
+预期的发现是：
 
-- tag-pinned Actions rather than full commit SHAs;
-- `permissions: write-all`;
-- missing input validation in `src/lib/feedback.js`.
+- Actions 用标签而非完整提交 SHA 固定；
+- `permissions: write-all`；
+- `src/lib/feedback.js` 缺少输入校验。
 
-Copilot wording may differ. The risk and affected line matter, not exact text. If one finding is
-missing, request one re-review. Do not repeatedly rerun review during the recording.
+Copilot 的措辞可能不同。重要的是风险和涉及的代码行，而非确切文字。如果缺一条发现，
+请求一次重新审查。录制期间不要反复重跑审查。
 
-GitHub reference:
-[Using GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review).
+GitHub 参考文档：
+[Using GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review)。
 
-## 10. Record Beat 2 — address review and Agent Merge
+## 10. 录制 Beat 2 —— 处理审查并完成 Agent Merge
 
-1. Return to the **original feature implementation session** from Step 8, not a new PR-review
-   session. Confirm its linked PR is the feature PR, not the prepared Dependabot PR.
-2. Show the Copilot review findings in the PR panel or browser.
-3. In the original implementation session, enter:
+1. 回到第 8 步的**原始功能实现会话**，而不是新的 PR 审查会话。确认其关联 PR 是功能 PR，
+   不是预备好的 Dependabot PR。
+2. 在 PR 面板或浏览器中展示 Copilot 审查发现。
+3. 在原始实现会话中输入：
 
    ```text
    Address all Copilot Code Review findings. Pin Actions to full commit SHAs, replace write-all
    with least-privilege Pages permissions, and validate feedback input. Do not change dependencies.
    ```
 
-4. Review the resulting diff and have the session commit and push the fixes to the same PR.
-   Keep dependencies unchanged.
-5. Confirm both **Pull request checks** (`build`) and **Dependency policy** (`audit`) have started
-   for the latest commit or have passed. Do not substitute an older commit's green results.
-6. Open the dropdown beside **Create PR** or the current PR action and select **Agent merge**.
-   Point out that the main button's label changes to **Agent merge**.
-7. Click the main **Agent merge** button to start it. Selecting the menu item alone is not the
-   same as starting the action. The session must manage the existing linked feature PR, not
-   create a duplicate.
-8. Show the Agent Merge action permissions. Permit **Address reviews**, **Fix CI failures**, and
-   **Resolve conflicts** as needed. Permit **Merge pull request** only after the intended review
-   fixes have been inspected and you are ready for the feature to land. If the UI already
-   permits merging when you start it, complete that inspection before starting.
-9. Keep the session visible as it checks the PR and merges it when GitHub allows. Show the PR's
-   **Merged** state, then switch to the deployment run.
+4. 检查产生的 diff，让会话把修复提交并推送到同一个 PR。保持依赖不变。
+5. 确认针对最新提交，**Pull request checks**（`build`）与 **Dependency policy**（`audit`）
+   均已开始或已通过。不要用旧提交的绿色结果充数。
+6. 打开 **Create PR** 或当前 PR 操作旁的下拉菜单，选择 **Agent merge**。指出主按钮的
+   标签变成了 **Agent merge**。
+7. 点击主按钮 **Agent merge** 启动它。只选菜单项并不等于启动操作。会话必须管理已有的
+   关联功能 PR，而不是创建重复的 PR。
+8. 展示 Agent Merge 操作权限。按需允许 **Address reviews**、**Fix CI failures** 与
+   **Resolve conflicts**。只有在预期审查修复已检查完毕、准备让功能落地之后，才允许
+   **Merge pull request**。如果启动时 UI 已经允许合并，先完成检查再启动。
+9. 让会话保持可见，展示它检查 PR 并在 GitHub 允许时合并的过程。展示 PR 的 **Merged**
+   状态，然后切换到部署运行。
 
-**Expected result:** Agent Merge lands the reviewed feature PR after required checks pass.
+**预期结果：** Agent Merge 在必需检查通过后落地已审查的功能 PR。
 
-Say: "This is Agent Merge in the Copilot app, not GitHub's Enable auto-merge button. The agent
-checks the PR and handles allowed follow-up work; GitHub still enforces the required checks."
+说：*"这是 Copilot 应用里的 Agent Merge，不是 GitHub 的 Enable auto-merge 按钮。agent
+会检查 PR 并处理被允许的后续工作；GitHub 仍在强制执行必需检查。"*
 
-Green checks do not prevent Agent Merge from working. There is no need to race a pending-check
-window. If everything is already satisfied, the merge may happen quickly. Do not silently replace
-this beat with native **Enable auto-merge** or a manual merge and describe it as Agent Merge.
-If the app control is unavailable, use the prepared Agent Merge recording and label the fallback.
+检查全绿并不妨碍 Agent Merge 工作。无需和待运行检查的窗口赛跑。如果一切条件已满足，
+合并可能很快发生。不要静默地用原生 **Enable auto-merge** 或手动合并替代本环节，却把它
+说成 Agent Merge。如果应用控件不可用，使用预备好的 Agent Merge 录制并注明是替代方案。
 
-GitHub reference:
-[Managing issues and pull requests with the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/managing-issues-and-pull-requests).
-The [Agent Merge workshop](https://awesome-copilot.github.com/learning-hub/copilot-workshops/app/6-agent-merge/)
-shows the dropdown, start button, and merge permission.
+GitHub 参考文档：
+[Managing issues and pull requests with the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/managing-issues-and-pull-requests)。
+[Agent Merge workshop](https://awesome-copilot.github.com/learning-hub/copilot-workshops/app/6-agent-merge/)
+展示了下拉菜单、启动按钮与合并权限。
 
-## 11. Record Beat 3 — production gate blocks deployment
+## 11. 录制 Beat 3 —— 生产门禁阻断部署
 
-1. On GitHub, open **Actions**.
-2. Open the new **Build and deploy** run triggered by the merge to `main`.
-3. Open the build job.
-4. Show `npm ci` completing.
-5. Show the `node scripts/check-audit-state.mjs clean` step failing because production requires a
-   clean audit.
-6. Show the site-build step being skipped and the deploy job not running.
+1. 在 GitHub 上打开 **Actions**。
+2. 打开由合并到 `main` 触发的新 **Build and deploy** 运行。
+3. 打开构建任务。
+4. 展示 `npm ci` 完成。
+5. 展示 `node scripts/check-audit-state.mjs clean` 步骤失败，因为生产要求审计干净。
+6. 展示站点构建步骤被跳过、部署任务未运行。
 
-**Expected result:** working application code does not bypass the supply-chain policy.
+**预期结果：** 能正常工作的应用代码无法绕过供应链策略。
 
-Do not rerun the failed workflow; it should remain as evidence of the blocked state.
+不要重跑失败的工作流；它应作为被阻断状态的证据保留。
 
-## 12. Record Beat 4 — security findings and dependency remediation
+## 12. 录制 Beat 4 —— 安全发现与依赖修复
 
-1. Open **Security** or **Security and quality**.
-2. Under **Dependabot**, show the `marked@0.3.19` advisories.
-3. Open **Settings → Security and quality → Advanced Security**.
-4. Under **Secret Protection**, show that secret scanning is enabled.
-5. Show that **Push protection** is enabled and explain that it blocks supported provider secrets
-   before they reach the repository.
-6. If **Generic patterns** is shown, explain that it extends detection beyond provider secrets.
-   If it is absent, state that availability varies by account and the core protection is still
-   enabled.
-7. Optional: if Generic patterns produced the training alert, open **Secret scanning** and show the
-   bearer-header fixture. State clearly that it is a non-functional test value.
-8. Open **Pull requests** and select the prepared Dependabot `marked` update.
-9. Show its green **Dependency policy** and **Pull request checks**.
-10. Review the dependency diff, then merge this prepared PR on GitHub after its required checks
-    pass. Do not merge it before the feature deployment has demonstrated the failing gate.
-11. Explain that Dependabot generated the remediation and GitHub checked it. Agent Merge was
-    demonstrated explicitly on the feature PR in Beat 2; this is a separate dependency merge.
+1. 打开 **Security** 或 **Security and quality**。
+2. 在 **Dependabot** 下展示 `marked@0.3.19` 的公告。
+3. 打开 **Settings → Security and quality → Advanced Security**。
+4. 在 **Secret Protection** 下展示密钥扫描已启用。
+5. 展示 **Push protection** 已启用，并说明它会在受支持的提供商密钥进入仓库之前于推送时
+   拦截。
+6. 如果显示了 **Generic patterns**，说明它将检测范围扩展到提供商密钥之外。如果没有显示，
+   说明可用性因账户而异，而核心保护仍然启用。
+7. 可选：如果 Generic patterns 产生了训练告警，打开 **Secret scanning**，展示 bearer 头
+   测试数据。明确说明它是一个无实际功能的测试值。
+8. 打开 **Pull requests**，选择预备好的 Dependabot `marked` 更新。
+9. 展示其绿色的 **Dependency policy** 与 **Pull request checks**。
+10. 审查依赖 diff，然后在必需检查通过后于 GitHub 上合并这个预备好的 PR。不要在功能
+    部署演示出门禁失败之前合并它。
+11. 说明修复由 Dependabot 生成、由 GitHub 检查。Agent Merge 已在 Beat 2 的功能 PR 上
+    明确演示；这是一次独立的依赖合并。
 
-Do not assume a new Dependabot review session will expose Agent Merge: it may show **Submit
-review** instead. Use Agent Merge for this PR only if you separately rehearsed and verified that
-route. A green PR may offer immediate native merge rather than native **Enable auto-merge**.
+不要假设新的 Dependabot 审查会话会暴露 Agent Merge：它可能显示 **Submit review**。只有在
+单独排练并验证过该路径时，才对该 PR 使用 Agent Merge。绿色的 PR 可能直接提供立即合并，
+而不是原生 **Enable auto-merge**。
 
-**Expected result:** the dependency update is independently generated, checked, and merged without
-weakening the production gate. The audience also sees where Secret Protection and Push protection
-are configured, regardless of Generic-pattern availability.
+**预期结果：** 依赖更新由独立生成、经检查后合并，且没有削弱生产门禁。无论 Generic
+patterns 是否可用，观众都能看到 Secret Protection 与 Push protection 的配置位置。
 
-## 13. Record Beat 5 — successful deployment
+## 13. 录制 Beat 5 —— 成功部署
 
-1. Return to **Actions**.
-2. Open the new **Build and deploy** run triggered by the Dependabot merge.
-3. Show build, clean dependency policy, and deploy completing successfully.
-4. Open the deployment URL from the workflow or repository **Deployments** section.
-5. Navigate to the new or updated lesson page.
-6. Submit a feedback item including its topic.
-7. Show the item rendered on the page.
+1. 回到 **Actions**。
+2. 打开由 Dependabot 合并触发的新 **Build and deploy** 运行。
+3. 展示构建、干净的依赖策略与部署全部成功完成。
+4. 打开工作流或仓库 **Deployments** 区块中的部署 URL。
+5. 导航到新增或更新的课程页面。
+6. 提交一条包含主题（topic）的反馈。
+7. 展示该条反馈渲染在页面上。
 
-**Expected result:** the remediated dependency state reaches GitHub Pages and the completed feature
-works end to end.
+**预期结果：** 修复后的依赖状态到达 GitHub Pages，完成的功能端到端可用。
 
-Finish with:
+以这句话收尾：
 
 ```text
 Issue → AI draft → AI review → automated fix → security gate → deployment
 ```
 
-## 14. After recording
+## 14. 录制之后
 
-1. Keep the disposable repository until the recording has been reviewed.
-2. Save the repository URL, feature PR, Dependabot PR, failed workflow run, successful workflow
-   run, and Pages URL with the recording notes.
-3. Do not reset the repository for another take.
-4. For a retake or another language, create a new repository from the template and repeat from
-   Step 2.
+1. 在录制内容复审完成之前保留一次性仓库。
+2. 将仓库 URL、功能 PR、Dependabot PR、失败的工作流运行、成功的工作流运行以及 Pages
+   URL 与录制笔记一起存档。
+3. 不要为了重拍而重置该仓库。
+4. 重拍或换一种语言时，从模板创建新仓库，从第 2 步重新开始。
 
-The canonical template remains unchanged and ready for the next presenter.
+规范模板保持不变，随时可供下一位演示者使用。
 
-## Troubleshooting
+## 故障排查
 
-| Problem | Action |
+| 问题 | 处理 |
 |---|---|
-| `gh` cannot change workflows | Run `gh auth refresh -h github.com -s repo,workflow,read:org` |
-| Bootstrap targets the canonical repository | Stop and recreate/clone a disposable template repository |
-| Initialization cannot find its workflow | Confirm the template repository uses `main` and contains `.github/workflows/initialize-demo.yml` |
-| More than one Dependabot PR appears | Do not record; create a fresh template repository and rerun preflight |
-| `marked` PR is missing | Wait for GitHub scanning, then rerun preflight |
-| Generic patterns is absent | Continue and omit the optional secret-scanning beat |
-| Generic patterns is enabled but its alert is missing | Continue after preflight reports this as informational |
-| Copilot is absent from **Assignees** | Confirm the coding-agent license, feature setting, organization policy, and repository access |
-| Automatic review is absent | Request Copilot from the PR **Reviewers** sidebar once |
-| Session shows **Submit review** instead of Agent Merge | Return to the original feature implementation session; a new Dependabot or cloud-PR review session is not the demonstrated authoring route |
-| Empty session has no **Create PR** | Implement the feature and inspect its diff first, then check the implementation session's PR-action dropdown |
-| Agent Merge is absent in the implementation session | Confirm the app version, repository access, and Copilot plan; use the prepared Agent Merge recording rather than claim a manual merge is Agent Merge |
-| **Enable auto-merge** is absent | Confirm the PR is non-draft, **Allow auto-merge** is enabled, and the active ruleset requires `build` and `audit`; if everything already passes, use immediate merge |
-| `audit` remains **Expected** with no run | Remove dependency-path filters from **Dependency policy** using the updated template workflow, then push a new commit to trigger both checks; rerunning a skipped workflow is not sufficient |
-| Preflight reports missing or incorrect merge rules | Rerun bootstrap with `--apply --skip-deploy`, then confirm the ruleset above; do not bypass it |
-| Feature PR changes dependencies | Ask Copilot to revert `package.json` and `package-lock.json` |
-| Feature PR checks fail | Diagnose before recording; do not bypass required checks |
-| Final deploy fails | Preserve the failed run and use the approved fallback recording |
+| `gh` 无法修改工作流 | 运行 `gh auth refresh -h github.com -s repo,workflow,read:org` |
+| bootstrap 目标指向规范仓库 | 停止，重新创建/克隆一个一次性模板仓库 |
+| 初始化找不到其工作流 | 确认模板仓库使用 `main` 且包含 `.github/workflows/initialize-demo.yml` |
+| 出现多个 Dependabot PR | 不要录制；创建全新的模板仓库并重跑 preflight |
+| 缺少 `marked` PR | 等待 GitHub 扫描完成，然后重跑 preflight |
+| Generic patterns 不可用 | 继续，省略可选的密钥扫描环节 |
+| Generic patterns 已启用但告警缺失 | preflight 将其报告为信息项后即可继续 |
+| **Assignees** 中没有 Copilot | 确认 coding agent 许可、功能设置、组织策略与仓库访问权限 |
+| 没有自动审查 | 在 PR 的 **Reviewers** 侧栏请求一次 Copilot |
+| 会话显示 **Submit review** 而非 Agent Merge | 回到原始功能实现会话；新的 Dependabot 或云端 PR 审查会话不是已演示的创作路径 |
+| 空会话没有 **Create PR** | 先实现功能并检查其 diff，再查看实现会话的 PR 操作下拉菜单 |
+| 实现会话中没有 Agent Merge | 确认应用版本、仓库访问权限与 Copilot 计划；使用预备好的 Agent Merge 录制，不要把手动合并说成 Agent Merge |
+| 没有 **Enable auto-merge** | 确认 PR 非草稿、**Allow auto-merge** 已启用、激活的规则集要求 `build` 与 `audit`；若一切已满足，直接使用立即合并 |
+| `audit` 停留在 **Expected** 且无运行 | 使用更新后的模板工作流移除 **Dependency policy** 的依赖路径过滤，然后推送新提交触发两个检查；重跑被跳过的工作流不够 |
+| preflight 报告合并规则缺失或不正确 | 用 `--apply --skip-deploy` 重跑 bootstrap，然后核对上文规则集；不要绕过它 |
+| 功能 PR 更改了依赖 | 要求 Copilot 还原 `package.json` 与 `package-lock.json` |
+| 功能 PR 检查失败 | 录制前诊断清楚；不要绕过必需检查 |
+| 最终部署失败 | 保留失败的运行，使用已批准的兜底录制 |

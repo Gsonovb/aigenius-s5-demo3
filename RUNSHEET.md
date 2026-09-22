@@ -1,8 +1,8 @@
-# Runsheet
+# 演示流程表
 
-The delivery guidance is now separated by audience:
+交付指引现已按受众拆分：
 
-- **Presenters:** [`PRESENTER-RUNSHEET.md`](./PRESENTER-RUNSHEET.md)
-- **Audience members:** [`AUDIENCE-WALKTHROUGH.md`](./AUDIENCE-WALKTHROUGH.md)
+- **演示者：** [`PRESENTER-RUNSHEET.md`](./PRESENTER-RUNSHEET.md)
+- **观众：** [`AUDIENCE-WALKTHROUGH.md`](./AUDIENCE-WALKTHROUGH.md)
 
-This file remains as a compatibility pointer for existing links.
+本文件保留为兼容入口，供既有链接使用。

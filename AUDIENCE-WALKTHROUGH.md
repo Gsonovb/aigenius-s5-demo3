@@ -1,67 +1,63 @@
-# Ship with AI — audience walkthrough
+# Ship with AI —— 观众导览
 
-Use this page to follow the demonstration without needing to configure a repository.
+使用本页可以在无需配置仓库的情况下跟随演示。
 
-## The story in six steps
+## 六个步骤讲完的故事
 
-| Stage | What you see | Why it matters |
+| 阶段 | 你会看到 | 为什么重要 |
 |---|---|---|
-| 1. Issue | A short description and acceptance criteria | AI starts from a reviewable statement of intent |
-| 2. Draft | Copilot creates a branch and pull request | Implementation is visible before it reaches production |
-| 3. Review | Copilot comments on code and workflow risks | AI-generated code receives independent scrutiny |
-| 4. Fix and merge | Copilot addresses findings; the presenter starts Agent Merge in the implementation session | Reviewed changes reach the branch only after required checks pass |
-| 5. Gate | The deployment stops on a vulnerable dependency | Security policy is enforced even when the application builds |
-| 6. Deploy | Dependabot fixes the dependency and Pages updates | A verified change moves from idea to a live result |
+| 1. Issue | 一段简短的描述和验收标准 | AI 从一份可审查的意图陈述出发 |
+| 2. 起草 | Copilot 创建分支和拉取请求 | 实现代码在到达生产环境之前全程可见 |
+| 3. 审查 | Copilot 对代码与工作流风险发表评论 | AI 生成的代码接受独立审查 |
+| 4. 修复与合并 | Copilot 处理审查发现；演示者在实现会话中启动 Agent Merge | 审查过的变更只在必需检查通过后才进入分支 |
+| 5. 门禁 | 部署因存在漏洞的依赖被阻断 | 即使应用能构建成功，安全策略依然被执行 |
+| 6. 部署 | Dependabot 修复依赖，Pages 更新 | 一个经过验证的变更从想法变为线上成果 |
 
-## Follow along during the demonstration
+## 演示过程中的跟随清单
 
-- [ ] The issue explains what success means.
-- [ ] The pull request shows exactly what the AI changed.
-- [ ] Review identifies unsafe permissions, unpinned Actions, or missing validation.
-- [ ] The presenter explicitly starts **Agent merge** in the Copilot app's implementation session.
-- [ ] Automated checks stay green before the feature is merged.
-- [ ] The production pipeline blocks the vulnerable dependency.
-- [ ] The dependency update clears the gate.
-- [ ] The final page is deployed successfully.
+- [ ] Issue 说明了成功的定义。
+- [ ] 拉取请求准确展示了 AI 修改的内容。
+- [ ] 审查发现了不安全权限、未固定版本的 Actions 或缺失的输入校验。
+- [ ] 演示者在 Copilot 应用的实现会话中显式启动 **Agent merge**。
+- [ ] 功能合并前自动化检查保持绿色。
+- [ ] 生产流水线阻断了含漏洞的依赖。
+- [ ] 依赖更新通过了门禁。
+- [ ] 最终页面成功部署。
 
-## Three separate responsibilities
+## 三项彼此独立的职责
 
-- **Copilot coding agent** implements the requested change.
-- **Copilot Code Review and security tools** look for different classes of risk.
-- **GitHub Actions and Agent Merge** enforce the result and move verified changes forward.
+- **Copilot coding agent** 实现所请求的变更。
+- **Copilot Code Review 与安全工具** 查找不同类别的风险。
+- **GitHub Actions 与 Agent Merge** 强制执行结果并推进已验证的变更。
 
-No single AI decision is treated as sufficient to ship.
+没有任何单一 AI 决策被认为足以支撑发布。
 
-Creating an issue does not automatically create a PR: the presenter starts a Copilot app
-implementation session from the issue and publishes its changes. That same session is used for
-Agent Merge after review. GitHub's native **Enable auto-merge** is a different control.
+创建 issue 并不会自动创建 PR：演示者从 issue 出发在 Copilot 应用中启动一个实现会话，
+并发表其变更。审查之后的 Agent Merge 也使用同一个会话。GitHub 原生的
+**Enable auto-merge** 是另一个不同的控件。
 
-Some presenters may also show Generic secret scanning. That is an optional extension because the
-setting is not available to every account; it is not required for the six-stage lifecycle.
-Every demonstration still shows where **Secret Protection** and **Push protection** are configured
-and explains how they detect supported provider secrets and block them before push.
+部分演示者可能还会演示 Generic secret scanning（通用密钥扫描）。这是可选扩展，因为该
+设置并非对所有账户可用；六阶段生命周期并不依赖它。每次演示仍会展示 **Secret Protection**
+（密钥保护）与 **Push protection**（推送保护）的配置位置，并说明它们如何检测受支持的
+提供商密钥并在推送前加以阻断。
 
-## Why the deployment fails once
+## 为什么部署会失败一次
 
-The start state deliberately uses `marked@0.3.19`, which has known regular-expression
-denial-of-service advisories. The application can build, but the production dependency policy
-rejects it. Dependabot proposes the upgrade, the dependency check verifies it, and only then can
-deployment continue.
+初始状态故意使用 `marked@0.3.19`，该版本存在已知的正则表达式拒绝服务（ReDoS）公告。
+应用可以构建成功，但生产依赖策略会拒绝它。Dependabot 提出升级建议，依赖检查对其进行
+验证，之后部署才能继续。
 
-The dependency upgrade does not sanitize arbitrary HTML. Output sanitization is a separate
-application-security responsibility.
+依赖升级并不会对任意 HTML 做净化的处理。输出净化是独立的应用安全职责。
 
-## Explore after the session
+## 会后自行探索
 
-- [`src/pages/pipeline.astro`](./src/pages/pipeline.astro) — the complete lifecycle.
-- [`src/pages/secure-supply-chain.astro`](./src/pages/secure-supply-chain.astro) — the security
-  concepts in plain language.
-- [`src/pages/diy.astro`](./src/pages/diy.astro) — safe local exploration and further resources.
+- [`src/pages/pipeline.astro`](./src/pages/pipeline.astro) —— 完整生命周期。
+- [`src/pages/secure-supply-chain.astro`](./src/pages/secure-supply-chain.astro) —— 用平实语言讲解安全概念。
+- [`src/pages/diy.astro`](./src/pages/diy.astro) —— 安全的本地探索方式与更多资源。
 
-This repository contains deliberate training findings. Run it locally for learning; do not use the
-start state as a production template.
+本仓库包含刻意设置的训练用告警项。请在本地运行以供学习；不要将初始状态用作生产模板。
 
-## Takeaway
+## 核心要点
 
-AI can accelerate implementation, review, remediation, and delivery. Reliable shipping comes from
-making those capabilities independent, visible, and policy-gated.
+AI 可以加速实现、审查、修复与交付。可靠的发布来自让这些能力彼此独立、全程可见，
+并置于策略门禁之下。
